@@ -1,12 +1,13 @@
 # Splunk Integration on Quarkus
 
+## Setup
+
+Set HTTP Event Collector (HEC) on your (local) Splunk and copy the token.
+Ensure that the HEC has SSL disabled and that all tokens are enabled.
 ## Running
 
-Before running, please update the file with the HEC token by replacing
-`PASTETOKENHERE` and setting Splunk's hostname by replacing `SPLUNKHOST`!
-
 ```
-$ ../mvnw quarkus:dev
+$ ../mvnw quarkus:dev -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN
 ```
 
 The REST endpoint created by the Integration is

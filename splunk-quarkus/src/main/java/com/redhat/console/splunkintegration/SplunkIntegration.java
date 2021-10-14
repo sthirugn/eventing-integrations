@@ -45,12 +45,12 @@ public class SplunkIntegration extends RouteBuilder {
                 // It sends token via Basic Preemptive Authentication.
                 // POST method is being used, set up explicitly
                 // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-                .to("http://SPLUNKHOST:8088/services/collector/raw?" +
+                .to("http://{{splunk.host}}/services/collector/raw?" +
                         "authenticationPreemptive=true&" +
                         "authMethod=Basic&" +
                         "httpMethod=POST&" +
                         "authUsername=x&" +
-                        "authPassword=PASTETOKENHERE")
+                        "authPassword={{splunk.token}}")
                 // Log after a successful send.
                 .to("log:info");
     }
