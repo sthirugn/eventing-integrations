@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: eventing-splunk-quarkus
+objects:
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: eventing-splunk-quarkus
+    labels:
+      app: eventing-splunk-quarkus
+      clowdapp: eventing-splunk-quarkus
+  spec:
+    envName: ${ENV_NAME}
+    deployments:
+    - name: service
+      webServices:
+        private:
+          enable: true
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /q/health/live
+            port: ${{QUARKUS_HTTP_PORT}}
+            scheme: HTTP
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /q/health/ready
+            port: ${{QUARKUS_HTTP_PORT}}
+            scheme: HTTP
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        env:
+        - name: QUARKUS_HTTP_PORT
+          value: "${QUARKUS_HTTP_PORT}"
+        - name: SPLUNK_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: ${SPLUNK_SECRET_NAME}
+              key: hostname
+        - name: SPLUNK_PORT
+          valueFrom:
+            secretKeyRef:
+              name: ${SPLUNK_SECRET_NAME}
+              key: port
+        - name: SPLUNK_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ${SPLUNK_SECRET_NAME}
+              key: token
+        resources:
+          limits:
+            cpu: ${CPU_LIMIT}
+            memory: ${MEMORY_LIMIT}
+          requests:
+            cpu: ${CPU_REQUEST}
+            memory: ${MEMORY_REQUEST}
+parameters:
+  - name: IMAGE
+    value: quay.io/vkrizan/eventing-splunk-quarkus
+  - name: IMAGE_TAG
+    value: latest
+  - name: ENV_NAME
+    required: true
+  - name: CPU_LIMIT
+    value: 500m
+  - name: MEMORY_LIMIT
+    value: 512Mi
+  - name: CPU_REQUEST
+    value: 100m
+  - name: MEMORY_REQUEST
+    value: 256Mi
+  - name: QUARKUS_HTTP_PORT
+    description: "Listen port of the Quarkus, defaulting to default Clowder private port"
+    value: "9000"
+  - name: SPLUNK_SECRET_NAME
+    description: "Name of the Secret resource containing Splunk credentials"
+    value: "eventing-splunk-credentials"
