@@ -25,34 +25,36 @@ $ podman build -f Dockerfile.jvm -t quay.io/vkrizan/eventing-splunk-quarkus ..
 Running within container:
 
 ```
-podman run -it -p 8080:8080 -e SPLUNK_HOSTNAME=SPLUNKIP -e SPLUNK_TOKEN=token quay.io/vkrizan/eventing-splunk-quarkus
+podman run -it -e SPLUNK_HOSTNAME=SPLUNKIP -e SPLUNK_TOKEN=token\
+ -p KAFKA_INGRESS_BROKERS=BROKER:9092 quay.io/vkrizan/eventing-splunk-quarkus
 ```
 
 You might ommit the interative terminal options `-it` if you want to have
 it running in background (detached).
 
 
-To run it locally with dev mode replace `SPLUNKIP` and `TOKEN` and execute:
+To run it locally with dev mode replace `SPLUNKIP`, `TOKEN` and `BROKER`
+and execute:
 
 ```
-$ ../mvnw quarkus:dev -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN
+$ ../mvnw quarkus:dev -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN \
+  -Dkafka.ingress.brokers=BROKER:9092
 ```
 
-The REST endpoint created by the Integration is
-`POST /event` bound on `localhost:8080`.
+The integration would connect to Kafka on `platform.notifications.ingress`
+and would pass messages to configured Splunk.
 
 ### Trying it out
 
-Send an event with POST using curl:
+Generate a message on `platform.notifications.ingress` Kafka topic.
 
-```
-$ curl http://localhost:8080/event \
-    -H "Content-Type: application/json" \
-    -d '{"event": "Test"}'
-```
-
-Pay attention to the `Content-Type` which needs to be set for Camel
-to recognize the message body.
+This can be done for example using the Drift service:
+* registering a system
+* creating a baseline out of the registered system
+* assigning the system to baseline
+* chaning a fact of the baseline (e.g. bios) or changing the system
+  (updating a package)
+* running a system check-in from the system
 
 ## Deployment/Ephemeral Environment
 
@@ -95,27 +97,22 @@ replace `SPULNKIP` and `TOKEN`.
 ### Process and Deploy
 
 ```
-$ oc process -f ./clowdapp.yaml -o yaml -p ENV_NAME=env-ephemeral-N | oc apply -f -
+$ oc process -f ./clowdapp.yaml -o yaml \
+  -p IMAGE_TAG=kafka\
+  -p ENV_NAME=env-ephemeral-NN\
+  -p KAFKA_INGRESS_BROKERS=BROKER:9092 | oc apply -f -
 ```
-replace N with the number of the reserved ephemeral namespace.
+replace NN with the number of the reserved ephemeral namespace,
+and `BROKER` with the hostname of the ephemeral broker instance
+(e.g. `env-ephemeral-42-76676c3d-kafka-brokers`).
 
 
 (Note that this can be done using bonfire with a local config.)
-
-
-### Trying out with port-forward
-
-First port-forward the service:
-
-```
-$ oc port-forward service/eventing-splunk-quarkus-service 8080:9000
-```
-
-then follow the [Trying it out](#trying-it-out) steps.
 
 
 ### Cleanup
 
 ```
 $ oc delete clowdapp eventing-splunk-quarkus
+$ oc delete secret eventing-splunk-credentials
 ```
