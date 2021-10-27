@@ -23,7 +23,7 @@ public class SplunkIntegration extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         // Listen on POST /event.
-        from("rest:post:event")
+        from("kafka:{{kafka.ingress.topic}}?brokers={{kafka.ingress.brokers}}")
                 // Log the message/data.
                 .to("log:info")
                 // Send message synchronously to Camel enpoint named "splunk".

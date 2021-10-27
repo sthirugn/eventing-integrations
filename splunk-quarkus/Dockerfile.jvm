@@ -32,6 +32,8 @@ RUN microdnf install openssl curl ca-certificates ${JAVA_PACKAGE} \
 ENV SPLUNK_HOSTNAME="SETSPLUNKHOST"
 ENV SPLUNK_PORT="8088"
 ENV SPLUNK_TOKEN="TOKEN"
+ENV KAFKA_INGRESS_BROKERS="SETBROKERS"
+ENV KAFKA_INGRESS_TOPIC="platform.notifications.ingress"
 
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager\
  -Dquarkus.log.file.enable=false"
@@ -46,4 +48,7 @@ EXPOSE 8080
 USER 1001
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTIONS -Dsplunk.host=$SPLUNK_HOSTNAME:$SPLUNK_PORT\
- -Dsplunk.token=$SPLUNK_TOKEN -jar /deployments/quarkus-run.jar "]
+ -Dsplunk.token=$SPLUNK_TOKEN \
+ -Dkafka.ingress.brokers=$KAFKA_INGRESS_BROKERS\
+ -Dkafka.ingress.topic=$KAFKA_INGRESS_TOPIC\
+ -jar /deployments/quarkus-run.jar "]

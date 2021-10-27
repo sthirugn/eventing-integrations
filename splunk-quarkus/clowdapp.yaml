@@ -43,6 +43,10 @@ objects:
         env:
         - name: QUARKUS_HTTP_PORT
           value: "${QUARKUS_HTTP_PORT}"
+        - name: KAFKA_INGRESS_BROKERS
+          value: "${KAFKA_INGRESS_BROKERS}"
+        - name: KAFKA_INGRESS_TOPIC
+          value: "${KAFKA_INGRESS_TOPIC}"
         - name: SPLUNK_HOSTNAME
           valueFrom:
             secretKeyRef:
@@ -86,3 +90,9 @@ parameters:
   - name: SPLUNK_SECRET_NAME
     description: "Name of the Secret resource containing Splunk credentials"
     value: "eventing-splunk-credentials"
+  - name: KAFKA_INGRESS_BROKERS
+    description: Kafka brokers for the consumer
+    required: true
+  - name: KAFKA_INGRESS_TOPIC
+    description: Kafka topic that the consumer takes messages from
+    value: platform.notifications.ingress
