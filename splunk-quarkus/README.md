@@ -12,6 +12,7 @@
 
 Set HTTP Event Collector (HEC) on your (local) Splunk and copy the token.
 Ensure that the HEC has SSL disabled and that all tokens are enabled.
+
 ### Container Image Build
 
 ```
