@@ -41,12 +41,12 @@ $ ../mvnw quarkus:dev -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN \
   -Dkafka.ingress.brokers=BROKER:9092
 ```
 
-The integration would connect to Kafka on `platform.notifications.ingress`
+The integration would connect to Kafka on `platform.notifications.tocamel`
 and would pass messages to configured Splunk.
 
 ### Trying it out
 
-Generate a message on `platform.notifications.ingress` Kafka topic.
+Generate a message on `platform.notifications.tocamel` Kafka topic.
 
 This can be done for example using the Drift service:
 * registering a system
