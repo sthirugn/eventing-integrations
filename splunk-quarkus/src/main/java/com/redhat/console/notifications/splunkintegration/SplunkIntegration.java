@@ -17,10 +17,12 @@
 package com.redhat.cloud.notifications.splunkintegration;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.Processor;
 
 /**
@@ -39,13 +41,20 @@ import org.apache.camel.Processor;
     IOException.class
 })
 @ApplicationScoped
-public class SplunkIntegration extends RouteBuilder {
+public class SplunkIntegration extends EndpointRouteBuilder {
 
     // The name of our component. Must be unique
     public static final String COMPONENT_NAME = "splunk-integration";
 
+    private static final Config CONFIG = ConfigProvider.getConfig();
     // Only accept/listen on these CloudEvent types
     public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
+    // Brokers
+    public static final String KAFKA_INGRESS_BROKERS = CONFIG.getValue("kafka.ingress.brokers", String.class);
+    // Event incoming Kafka topic
+    public static final String KAFKA_INGRESS_TOPIC = CONFIG.getValue("kafka.ingress.topic", String.class);
+    // Splunk Token
+    private static final String SPLUNK_TOKEN = CONFIG.getValue("splunk.token", String.class);
 
     @Override
     public void configure() throws Exception {
@@ -54,22 +63,22 @@ public class SplunkIntegration extends RouteBuilder {
     }
 
     private void configureIngress() throws Exception {
-        from("kafka:{{kafka.ingress.topic}}?brokers={{kafka.ingress.brokers}}")
+        from(kafka(KAFKA_INGRESS_TOPIC).brokers(KAFKA_INGRESS_BROKERS))
             // Decode CloudEvent
             .process(new CloudEventDecoder())
             // We check that this is our type.
             // Otherwise, we ignore the message there will be another component that takes care
             .filter().simple("${header.ce-type} == '" + CE_TYPE + "'")
                 // Log the parsed cloudevent message.
-                .to("log:info")
-                .to("direct:handler")
+                .to(log("info"))
+                .to(direct("handler"))
             .end();
     }
 
     private void configureHandler() throws Exception {
         // Receive messages on internal enpoint (within the same JVM)
         // named "splunk".
-        from("direct:handler")
+        from(direct("handler"))
             // Remove headers of previous message,
             // specifically the ones that HTTP components use
             // to prevent passing the REST path to the HTTP producer.
@@ -82,13 +91,13 @@ public class SplunkIntegration extends RouteBuilder {
             // It sends token via Basic Preemptive Authentication.
             // POST method is being used, set up explicitly
             // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-            .to("http://{{splunk.host}}/services/collector/raw?" +
-                    "authenticationPreemptive=true&" +
-                    "authMethod=Basic&" +
-                    "httpMethod=POST&" +
-                    "authUsername=x&" +
-                    "authPassword={{splunk.token}}")
+            .to(http("{{splunk.host}}/services/collector/raw")
+                .authenticationPreemptive(true)
+                .authMethod("Basic")
+                .httpMethod("POST")
+                .authUsername("x")
+                .authPassword(SPLUNK_TOKEN))
             // Log after a successful send.
-            .to("log:info");
+            .to(log("info"));
     }
 }
