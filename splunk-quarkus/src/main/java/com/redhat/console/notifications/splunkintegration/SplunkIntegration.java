@@ -42,36 +42,42 @@ public class SplunkIntegration extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        // Listen on POST /event.
-        from("kafka:{{kafka.ingress.topic}}?brokers={{kafka.ingress.brokers}}")
-                // Log the message/data.
-                .to("log:info")
-                // Send message synchronously to Camel enpoint named "splunk".
-                .to("direct:splunk")
-                .transform().constant("{\"status\":\"sent\"}");
+        configureIngress();
+        configureHandler();
+    }
 
+    private void configureIngress() throws Exception {
+        from("kafka:{{kafka.ingress.topic}}?brokers={{kafka.ingress.brokers}}")
+            // Log the message/data.
+            .to("log:info")
+            // Send message synchronously to Camel enpoint named "splunk".
+            .to("direct:handler")
+            .transform().constant("{\"status\":\"sent\"}");
+    }
+
+    private void configureHandler() throws Exception {
         // Receive messages on internal enpoint (within the same JVM)
         // named "splunk".
-        from("direct:splunk")
-                // Remove headers of previous message,
-                // specifically the ones that HTTP components use
-                // to prevent passing the REST path to the HTTP producer.
-                // Without this it would use path: /services/collector/raw/event
-                // where the "/event" is the REST endpoint configured on previous
-                // component.
-                .removeHeaders("CamelHttp*")
+        from("direct:handler")
+            // Remove headers of previous message,
+            // specifically the ones that HTTP components use
+            // to prevent passing the REST path to the HTTP producer.
+            // Without this it would use path: /services/collector/raw/event
+            // where the "/event" is the REST endpoint configured on previous
+            // component.
+            .removeHeaders("CamelHttp*")
 
-                // Send the message to Splunk's HEC as raw data.
-                // It sends token via Basic Preemptive Authentication.
-                // POST method is being used, set up explicitly
-                // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-                .to("http://{{splunk.host}}/services/collector/raw?" +
-                        "authenticationPreemptive=true&" +
-                        "authMethod=Basic&" +
-                        "httpMethod=POST&" +
-                        "authUsername=x&" +
-                        "authPassword={{splunk.token}}")
-                // Log after a successful send.
-                .to("log:info");
+            // Send the message to Splunk's HEC as raw data.
+            // It sends token via Basic Preemptive Authentication.
+            // POST method is being used, set up explicitly
+            // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
+            .to("http://{{splunk.host}}/services/collector/raw?" +
+                    "authenticationPreemptive=true&" +
+                    "authMethod=Basic&" +
+                    "httpMethod=POST&" +
+                    "authUsername=x&" +
+                    "authPassword={{splunk.token}}")
+            // Log after a successful send.
+            .to("log:info");
     }
 }
