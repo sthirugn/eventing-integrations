@@ -16,8 +16,28 @@
  */
 package com.redhat.cloud.notifications.splunkintegration;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.builder.RouteBuilder;
 
+import javax.enterprise.context.ApplicationScoped;
+import java.io.IOException;
+
+/**
+ * The main class that does the work setting up the Camel routes.
+ * Entry point for messages is below 'from(INCOMING_CHANNEL)'
+ * Upon success/failure a message is returned to the RETURN_CHANNEL
+ * topic.
+ */
+
+/*
+ * We need to register some classes for reflection here, so that
+ * native compilation can work if desired.
+ */
+@RegisterForReflection(targets = {
+    Exception.class,
+    IOException.class
+})
+@ApplicationScoped
 public class SplunkIntegration extends RouteBuilder {
 
     @Override
