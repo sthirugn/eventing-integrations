@@ -17,10 +17,11 @@
 package com.redhat.cloud.notifications.splunkintegration;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.apache.camel.builder.RouteBuilder;
-
 import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Processor;
 
 /**
  * The main class that does the work setting up the Camel routes.
@@ -40,6 +41,12 @@ import java.io.IOException;
 @ApplicationScoped
 public class SplunkIntegration extends RouteBuilder {
 
+    // The name of our component. Must be unique
+    public static final String COMPONENT_NAME = "splunk-integration";
+
+    // Only accept/listen on these CloudEvent types
+    public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
+
     @Override
     public void configure() throws Exception {
         configureIngress();
@@ -48,11 +55,15 @@ public class SplunkIntegration extends RouteBuilder {
 
     private void configureIngress() throws Exception {
         from("kafka:{{kafka.ingress.topic}}?brokers={{kafka.ingress.brokers}}")
-            // Log the message/data.
-            .to("log:info")
-            // Send message synchronously to Camel enpoint named "splunk".
-            .to("direct:handler")
-            .transform().constant("{\"status\":\"sent\"}");
+            // Decode CloudEvent
+            .process(new CloudEventDecoder())
+            // We check that this is our type.
+            // Otherwise, we ignore the message there will be another component that takes care
+            .filter().simple("${header.ce-type} == '" + CE_TYPE + "'")
+                // Log the parsed cloudevent message.
+                .to("log:info")
+                .to("direct:handler")
+            .end();
     }
 
     private void configureHandler() throws Exception {
