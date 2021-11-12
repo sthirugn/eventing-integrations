@@ -37,7 +37,8 @@ To run it locally with dev mode replace `SPLUNKIP`, `TOKEN` and `BROKER`
 and execute:
 
 ```
-$ ../mvnw quarkus:dev -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN \
+$ ../mvnw quarkus:dev -Dquarkus.kafka.devservices.enabled=false \
+  -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN \
   -Dkafka.ingress.brokers=BROKER:9092
 ```
 
