@@ -87,17 +87,21 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             // component.
             .removeHeaders("CamelHttp*")
 
+            // body is a JsonObject so converting to String
+            // for the http producer
+            .convertBodyTo(String.class)
+
             // Send the message to Splunk's HEC as raw data.
             // It sends token via Basic Preemptive Authentication.
             // POST method is being used, set up explicitly
             // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-            .to(http("{{splunk.host}}/services/collector/raw")
+            .toD(http("$simple{headers.metadata[url]}/services/collector/raw")
                 .authenticationPreemptive(true)
                 .authMethod("Basic")
                 .httpMethod("POST")
                 .authUsername("x")
-                .authPassword(SPLUNK_TOKEN))
+                .authPassword("$simple{headers.extras[token]}"))
             // Log after a successful send.
-            .to(log("info"));
+            .log("Response ${body}");
     }
 }

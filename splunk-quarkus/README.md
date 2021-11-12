@@ -38,7 +38,6 @@ and execute:
 
 ```
 $ ../mvnw quarkus:dev -Dquarkus.kafka.devservices.enabled=false \
-  -Dsplunk.host=SPLUNKIP:8088 -Dsplunk.token=TOKEN \
   -Dkafka.ingress.brokers=BROKER:9092
 ```
 
@@ -49,7 +48,20 @@ and would pass messages to configured Splunk.
 
 Generate a message on `platform.notifications.tocamel` Kafka topic.
 
-This can be done for example using the Drift service:
+Manually this can be achieved for example by producing a message using
+[`kafka-console-producer.sh`](https://kafka.apache.org/quickstart)
+tool from Kafka:
+```
+kafka-console-producer.sh --bootstrap-server localhost:9092 --topic platform.notifications.tocamel
+```
+
+Here is an example CloudEvent for testing:
+```
+{"data":"{\"notif-metadata\":{\"extras\":\"{\\\"token\\\":\\\"TOKEN\\\"}\",\"url\":\"localhost:8088\"},\"payload\":\"{}\"}","type":"com.redhat.console.notification.toCamel.splunk-integration"}
+```
+(don't forget to replace `TOKEN` with your HEC token)
+
+Within platform this can be achieved for example using the Drift service:
 * registering a system
 * creating a baseline out of the registered system
 * assigning the system to baseline
