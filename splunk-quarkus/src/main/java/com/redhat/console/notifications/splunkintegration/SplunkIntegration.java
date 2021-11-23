@@ -44,7 +44,7 @@ import org.apache.camel.Processor;
 public class SplunkIntegration extends EndpointRouteBuilder {
 
     // The name of our component. Must be unique
-    public static final String COMPONENT_NAME = "splunk-integration";
+    public static final String COMPONENT_NAME = "splunk";
 
     private static final Config CONFIG = ConfigProvider.getConfig();
     // Only accept/listen on these CloudEvent types
