@@ -57,7 +57,7 @@ kafka-console-producer.sh --bootstrap-server localhost:9092 --topic platform.not
 
 Here is an example CloudEvent for testing:
 ```
-{"data":"{\"notif-metadata\":{\"extras\":\"{\\\"token\\\":\\\"TOKEN\\\"}\",\"url\":\"localhost:8088\"},\"payload\":\"{}\"}","type":"com.redhat.console.notification.toCamel.splunk-integration"}
+{"data":"{\"notif-metadata\":{\"extras\":\"{\\\"token\\\":\\\"TOKEN\\\"}\",\"url\":\"localhost:8088\"},\"payload\":\"{}\"}","type":"com.redhat.console.notification.toCamel.splunk"}
 ```
 (don't forget to replace `TOKEN` with your HEC token)
 
@@ -100,7 +100,7 @@ where N is the number of the reserved ephemeral namespace.
 
 ```
 $ oc process -f ./clowdapp.yaml -o yaml \
-  -p IMAGE_TAG=kafka\
+  -p IMAGE_TAG=notif-v2\
   -p ENV_NAME=env-ephemeral-NN\
   -p KAFKA_INGRESS_BROKERS=BROKER:9092 | oc apply -f -
 ```
