@@ -95,4 +95,4 @@ parameters:
     required: true
   - name: KAFKA_INGRESS_TOPIC
     description: Kafka topic that the consumer takes messages from
-    value: platform.notifications.ingress
+    value: platform.notifications.tocamel

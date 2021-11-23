@@ -33,7 +33,7 @@ ENV SPLUNK_HOSTNAME="SETSPLUNKHOST"
 ENV SPLUNK_PORT="8088"
 ENV SPLUNK_TOKEN="TOKEN"
 ENV KAFKA_INGRESS_BROKERS="SETBROKERS"
-ENV KAFKA_INGRESS_TOPIC="platform.notifications.ingress"
+ENV KAFKA_INGRESS_TOPIC="platform.notifications.tocamel"
 
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager\
  -Dquarkus.log.file.enable=false"
