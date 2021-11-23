@@ -47,21 +47,6 @@ objects:
           value: "${KAFKA_INGRESS_BROKERS}"
         - name: KAFKA_INGRESS_TOPIC
           value: "${KAFKA_INGRESS_TOPIC}"
-        - name: SPLUNK_HOSTNAME
-          valueFrom:
-            secretKeyRef:
-              name: ${SPLUNK_SECRET_NAME}
-              key: hostname
-        - name: SPLUNK_PORT
-          valueFrom:
-            secretKeyRef:
-              name: ${SPLUNK_SECRET_NAME}
-              key: port
-        - name: SPLUNK_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: ${SPLUNK_SECRET_NAME}
-              key: token
         resources:
           limits:
             cpu: ${CPU_LIMIT}
@@ -87,9 +72,6 @@ parameters:
   - name: QUARKUS_HTTP_PORT
     description: "Listen port of the Quarkus, defaulting to default Clowder private port"
     value: "9000"
-  - name: SPLUNK_SECRET_NAME
-    description: "Name of the Secret resource containing Splunk credentials"
-    value: "eventing-splunk-credentials"
   - name: KAFKA_INGRESS_BROKERS
     description: Kafka brokers for the consumer
     required: true

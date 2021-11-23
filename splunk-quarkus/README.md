@@ -33,7 +33,7 @@ You might ommit the interative terminal options `-it` if you want to have
 it running in background (detached).
 
 
-To run it locally with dev mode replace `SPLUNKIP`, `TOKEN` and `BROKER`
+To run it locally with dev mode replace `BROKER`
 and execute:
 
 ```
@@ -96,17 +96,6 @@ $ oc project ephemeral-N
 where N is the number of the reserved ephemeral namespace.
 
 
-### Create Secret
-
-```
-$ oc create secret generic eventing-splunk-credentials \
- --from-literal=hostname=SPULNKIP \
- --from-literal=port=8088 \
- --from-literal=token=TOKEN
-```
-
-replace `SPULNKIP` and `TOKEN`.
-
 ### Process and Deploy
 
 ```
@@ -121,11 +110,3 @@ and `BROKER` with the hostname of the ephemeral broker instance
 
 
 (Note that this can be done using bonfire with a local config.)
-
-
-### Cleanup
-
-```
-$ oc delete clowdapp eventing-splunk-quarkus
-$ oc delete secret eventing-splunk-credentials
-```
