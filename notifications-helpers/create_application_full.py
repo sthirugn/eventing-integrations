@@ -7,11 +7,8 @@ helpers.set_path_prefix(base_url + tp_part)
 
 # Parameters to set
 bundle_name = "rhel"
-bundle_description = "My RHEL system"
 app_name = "advisor"
-app_display_name = "advisor"
 event_type = "new-recommendation"
-event_type_display_name = "Advisor Recommendations"
 bg_name = "Send Advisor Recommendations to Splunk"
 
 f = open("rhid.txt", "r")
@@ -21,20 +18,24 @@ line = f.readline()
 x_rh_id = line.strip()
 f.close()
 
-# ---
-# Add the application
 
-print(">>> create bundle")
-bundle_id = helpers.add_bundle(bundle_name, bundle_description)
+bundle_id = helpers.find_bundle(bundle_name)
+print(f"Bundle: {bundle_name} {bundle_id}")
+if not bundle_id:
+    exit('missing bundle')
 
-print(">>> create application")
-app_id = helpers.add_application(bundle_id, app_name, app_display_name)
+app_id = helpers.find_application(bundle_id, app_name)
+print(f"Application: {app_name} {app_id}")
+if not app_id:
+    exit('missing application')
 
-print(">>> add eventType to application")
-et_id = helpers.add_event_type(app_id, event_type, event_type_display_name)
+et_id = helpers.find_event_type(app_id, event_type)
+print(f"Event Type: {event_type} {et_id}")
+if not et_id:
+    exit('missing event type')
 
-print(">>> create a behavior group")
-bg_id = helpers.create_behavior_group(bg_name, bundle_id, x_rh_id )
+print(f">>> create a behavior group {bg_name}")
+bg_id = helpers.create_behavior_group(bg_name, bundle_id, x_rh_id)
 
 print(">>> add event type to behavior group")
 helpers.add_event_type_to_behavior_group(et_id, bg_id, x_rh_id)
