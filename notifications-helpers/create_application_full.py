@@ -1,9 +1,7 @@
+import sys
 import helpers
 
-base_url = "http://localhost:8085"
-tp_part = ""  # set to /api/notifications if going via TurnPike
-
-helpers.set_path_prefix(base_url + tp_part)
+DEFAULT_BASE_URL = "http://localhost:8085"
 
 # Parameters to set
 bundle_name = "rhel"
@@ -18,6 +16,18 @@ line = f.readline()
 x_rh_id = line.strip()
 f.close()
 
+if (len(sys.argv) < 3):
+    print(f'Usage: {sys.argv[0]} SPLUNK_URL SPLUNK_TOKEN [BASE_URL]')
+    print()
+    print(f'  BASE_URL defaults to {DEFAULT_BASE_URL}')
+    print('   append path /api/notifications if going via TurnPike')
+    sys.exit(1)
+
+splunk_url = sys.argv[1]
+splunk_token = sys.argv[2]
+base_url = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_BASE_URL
+
+helpers.set_path_prefix(base_url)
 
 bundle_id = helpers.find_bundle(bundle_name)
 print(f"Bundle: {bundle_name} {bundle_id}")
@@ -42,10 +52,10 @@ helpers.add_event_type_to_behavior_group(et_id, bg_id, x_rh_id)
 
 print(">>> create splunk endpoint")
 props = {
-    "url": "https://my_splunk_hec.splunkcloud.com",
+    "url": splunk_url,
     "sub_type": "splunk",
     "extras": {
-        "token": "SPLUNK_TOKEN"
+        "token": splunk_token
     }
 }
 ep_id = helpers.create_endpoint("splunk", x_rh_id, props, "camel")
