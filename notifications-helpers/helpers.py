@@ -88,7 +88,7 @@ def add_event_type(application_id, name, display_name):
     # First try to find it
     ret = find_event_type(application_id, name)
     if ret is not None:
-        return ret
+        return ret['id']
 
     # It does not exist, so create it
 
@@ -155,7 +155,7 @@ def find_event_type(application_id, name):
     j = r.json()
     for et in j:
         if et["name"] == name:
-            return et
+            return et['id']
 
     return None
 
@@ -241,6 +241,7 @@ def link_bg_endpoint(bg_id, ep_id, x_rhid):
     r = requests.put(notifications_prefix + "/notifications/behaviorGroups/" + bg_id + "/actions",
                      json=ep_list,
                      headers=headers)
+    return r
 
 
 def add_endpoint_to_event_type(event_type_id, endpoint_id, x_rhid):

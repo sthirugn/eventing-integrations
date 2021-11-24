@@ -1,6 +1,6 @@
 import helpers
 
-base_url = "http://localhost:8000"
+base_url = "http://localhost:8085"
 tp_part = ""  # set to /api/notifications if going via TurnPike
 
 helpers.set_path_prefix(base_url + tp_part)
@@ -10,7 +10,7 @@ bundle_name = "rhel"
 bundle_description = "My RHEL system"
 app_name = "advisor"
 app_display_name = "advisor"
-event_type = "new_recommendations"
+event_type = "new-recommendation"
 event_type_display_name = "Advisor Recommendations"
 bg_name = "Send Advisor Recommendations to Splunk"
 
@@ -47,7 +47,7 @@ props = {
         "token": "SPLUNK_TOKEN"
     }
 }
-ep_id = helpers.create_endpoint("splunk", x_rh_id, props, "splunk")
+ep_id = helpers.create_endpoint("splunk", x_rh_id, props, "camel")
 
 print(">>> link splunk endpoint to behaviour group")
 helpers.link_bg_endpoint(bg_id, ep_id, x_rh_id)
