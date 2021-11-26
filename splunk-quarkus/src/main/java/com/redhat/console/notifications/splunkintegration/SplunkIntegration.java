@@ -54,8 +54,6 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     public static final String KAFKA_INGRESS_BROKERS = CONFIG.getValue("kafka.ingress.brokers", String.class);
     // Event incoming Kafka topic
     public static final String KAFKA_INGRESS_TOPIC = CONFIG.getValue("kafka.ingress.topic", String.class);
-    // Splunk Token
-    private static final String SPLUNK_TOKEN = CONFIG.getValue("splunk.token", String.class);
 
     @Override
     public void configure() throws Exception {
