@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.Processor;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 /**
  * The main class that does the work setting up the Camel routes.
@@ -87,9 +88,9 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             // component.
             .removeHeaders("CamelHttp*")
 
-            // body is a JsonObject so converting to String
+            // body is a JsonObject so converting to consumable object
             // for the http producer
-            .convertBodyTo(String.class)
+            .marshal().json(JsonLibrary.Jackson)
 
             // Send the message to Splunk's HEC as raw data.
             // It sends token via Basic Preemptive Authentication.

@@ -100,7 +100,7 @@ where N is the number of the reserved ephemeral namespace.
 
 ```
 $ oc process -f ./clowdapp.yaml -o yaml \
-  -p IMAGE_TAG=notif-v2\
+  -p IMAGE_TAG=notif-v4\
   -p ENV_NAME=env-ephemeral-NN\
   -p KAFKA_INGRESS_BROKERS=BROKER:9092 | oc apply -f -
 ```
