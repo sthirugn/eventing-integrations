@@ -1,4 +1,6 @@
 import sys
+import json
+import base64
 import helpers
 
 DEFAULT_BASE_URL = "http://localhost:8085"
@@ -9,12 +11,21 @@ app_name = "advisor"
 event_type = "new-recommendation"
 bg_name = "Send Advisor Recommendations to Splunk"
 
-f = open("rhid.txt", "r")
+rh_id = {
+    'entitlements': {},
+    'identity': {
+        'account_number': '6089719', 'type': 'User',
+        'user': {
+            'email': 'jdoe@acme.org', 'first_name': 'Joe',
+            'is_active': False, 'is_internal': False,
+            'is_org_admin': False, 'last_name': 'Doe',
+            'username': 'jdoe'
+        }
+    },
+    'username': 'jdoe'
+}
 
-line = f.readline()
-# strip eventual \n at the end
-x_rh_id = line.strip()
-f.close()
+x_rh_id = base64.b64encode(json.dumps(rh_id, separators=(',', ':')).encode())
 
 if (len(sys.argv) < 3):
     print(f'Usage: {sys.argv[0]} SPLUNK_URL SPLUNK_TOKEN [BASE_URL]')
