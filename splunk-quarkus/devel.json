@@ -1,0 +1,20 @@
+{
+    "webPort": 8000,
+    "metricsPort": 9090,
+    "privatePort": 10000,
+    "kafka": {
+        "brokers": [
+            {
+                "hostname": "localhost:9092",
+                "port": 29092
+            }
+        ],
+        "topics": [
+            {
+                "requestedName": "platform.notifications.tocamel",
+                "name": "platform.notifications.tocamel",
+                "consumerGroup": "Eventing"
+            }
+        ]
+    }
+}

@@ -19,6 +19,7 @@ package com.redhat.cloud.notifications.splunkintegration;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 
@@ -51,9 +52,14 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     // Only accept/listen on these CloudEvent types
     public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
     // Brokers
-    public static final String KAFKA_INGRESS_BROKERS = CONFIG.getValue("kafka.ingress.brokers", String.class);
+    @ConfigProperty(name = "kafka.bootstrap.servers") 
+    String kafkaIngressBrokers;
     // Event incoming Kafka topic
-    public static final String KAFKA_INGRESS_TOPIC = CONFIG.getValue("kafka.ingress.topic", String.class);
+    @ConfigProperty(name = "kafka.ingress.topic")
+    String kafkaIngressTopic;
+    
+    @ConfigProperty(name = "kafka.ingress.group.id")
+    String kafkaIngressGroupId;
 
     @Override
     public void configure() throws Exception {
@@ -62,7 +68,7 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     }
 
     private void configureIngress() throws Exception {
-        from(kafka(KAFKA_INGRESS_TOPIC).brokers(KAFKA_INGRESS_BROKERS))
+        from(kafka(kafkaIngressTopic).brokers(kafkaIngressBrokers).groupInstanceId(kafkaIngressGroupId))
             // Decode CloudEvent
             .process(new CloudEventDecoder())
             // We check that this is our type.
