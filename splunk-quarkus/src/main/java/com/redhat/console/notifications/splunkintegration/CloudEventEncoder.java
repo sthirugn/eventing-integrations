@@ -1,4 +1,4 @@
-package com.redhat.cloud.notifications.splunkintegration;
+package com.redhat.console.notifications.splunkintegration;
 
 
 import org.apache.camel.Exchange;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.cloud.notifications.splunkintegration;
+package com.redhat.console.notifications.splunkintegration;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.eclipse.microprofile.config.Config;
