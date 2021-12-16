@@ -29,8 +29,8 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 
 /**
  * The main class that does the work setting up the Camel routes.
- * Entry point for messages is below 'from(INCOMING_CHANNEL)'
- * Upon success/failure a message is returned to the RETURN_CHANNEL
+ * Entry point for messages is below 'from(kafka(kafkaIngressTopic))'
+ * Upon success/failure a message is returned to the kafkaReturnTopic
  * topic.
  */
 
@@ -51,20 +51,49 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     private static final Config CONFIG = ConfigProvider.getConfig();
     // Only accept/listen on these CloudEvent types
     public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
-    // Brokers
+    // Event incoming kafka brokers
     @ConfigProperty(name = "kafka.bootstrap.servers") 
     String kafkaIngressBrokers;
     // Event incoming Kafka topic
     @ConfigProperty(name = "kafka.ingress.topic")
     String kafkaIngressTopic;
-    
+    // Event incoming kafka group id
     @ConfigProperty(name = "kafka.ingress.group.id")
     String kafkaIngressGroupId;
+    // Event return Kafka topic
+    @ConfigProperty(name = "kafka.return.topic")
+    String kafkaReturnTopic;
+    // Event return kafka brokers
+    @ConfigProperty(name = "kafka.return.bootstrap.servers")
+    String kafkaReturnBrokers;
+    // Event return kafka group id
+    @ConfigProperty(name = "kafka.return.group.id")
+    String kafkaReturnGroupId;
+    // The return type
+    public static final String RETURN_TYPE = "com.redhat.console.notifications.error";
 
     @Override
     public void configure() throws Exception {
+        configureErrorHandler();
         configureIngress();
         configureHandler();
+    }
+
+    private void configureErrorHandler() throws Exception {
+        Processor ceEncoder = new CloudEventEncoder(COMPONENT_NAME, RETURN_TYPE);
+        Processor resultTransformer = new ResultTransformer();
+        onException(IOException.class)
+            .to(direct("error"))
+            .handled(true);
+        // The error handler. We set the outcome to fail and then send to kafka
+        from(direct("error"))
+            .setBody(simple("${exception.message}"))
+            .setHeader("outcome-fail", simple("true"))
+            .process(resultTransformer)
+            .marshal().json()
+            .log("Fail with for id ${header.ce-id} : ${exception.message}")
+            .process(ceEncoder)
+            .to(kafka(kafkaReturnTopic).brokers(kafkaReturnBrokers).groupInstanceId(kafkaReturnGroupId));
     }
 
     private void configureIngress() throws Exception {
