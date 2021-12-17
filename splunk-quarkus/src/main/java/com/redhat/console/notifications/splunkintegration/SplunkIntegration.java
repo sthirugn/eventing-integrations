@@ -121,15 +121,18 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             // component.
             .removeHeaders("CamelHttp*")
 
+            // Transform message to add splunk wrapper to the json
+            .transform().simple("{\"source\": \"eventing\", \"sourcetype\": \"Insights event\", \"event\": $(body),}")
+
             // body is a JsonObject so converting to consumable object
             // for the http producer
             .marshal().json(JsonLibrary.Jackson)
 
-            // Send the message to Splunk's HEC as raw data.
+            // Send the message to Splunk's HEC as a splunk formattted event.
             // It sends token via Basic Preemptive Authentication.
             // POST method is being used, set up explicitly
             // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-            .toD(http("$simple{headers.metadata[url]}/services/collector/raw")
+            .toD(http("$simple{headers.metadata[url]}/services/collector/event")
                 .authenticationPreemptive(true)
                 .authMethod("Basic")
                 .httpMethod("POST")
