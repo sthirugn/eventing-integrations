@@ -93,7 +93,7 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             .marshal().json()
             .log("Fail with for id ${header.ce-id} : ${exception.message}")
             .process(ceEncoder)
-            .to(kafka(kafkaReturnTopic).brokers(kafkaReturnBrokers).groupInstanceId(kafkaReturnGroupId));
+            .to(kafka(kafkaReturnTopic).brokers(kafkaReturnBrokers));
     }
 
     private void configureIngress() throws Exception {
