@@ -52,8 +52,8 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     // Only accept/listen on these CloudEvent types
     public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
     // Event incoming kafka brokers
-    @ConfigProperty(name = "kafka.bootstrap.servers") 
-    String kafkaIngressBrokers;
+    @ConfigProperty(name = "kafka.bootstrap.servers")
+    String kafkaBrokers;
     // Event incoming Kafka topic
     @ConfigProperty(name = "kafka.ingress.topic")
     String kafkaIngressTopic;
@@ -63,9 +63,6 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     // Event return Kafka topic
     @ConfigProperty(name = "kafka.return.topic")
     String kafkaReturnTopic;
-    // Event return kafka brokers
-    @ConfigProperty(name = "kafka.return.bootstrap.servers")
-    String kafkaReturnBrokers;
     // Event return kafka group id
     @ConfigProperty(name = "kafka.return.group.id")
     String kafkaReturnGroupId;
@@ -93,11 +90,11 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             .marshal().json()
             .log("Fail with for id ${header.ce-id} : ${exception.message}")
             .process(ceEncoder)
-            .to(kafka(kafkaReturnTopic).brokers(kafkaReturnBrokers));
+            .to(kafka(kafkaReturnTopic).brokers(kafkaBrokers));
     }
 
     private void configureIngress() throws Exception {
-        from(kafka(kafkaIngressTopic).brokers(kafkaIngressBrokers).groupInstanceId(kafkaIngressGroupId))
+        from(kafka(kafkaIngressTopic).brokers(kafkaBrokers).groupInstanceId(kafkaIngressGroupId))
             // Decode CloudEvent
             .process(new CloudEventDecoder())
             // We check that this is our type.
