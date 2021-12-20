@@ -25,20 +25,17 @@ $ podman build -f Dockerfile.jvm -t quay.io/vkrizan/eventing-splunk-quarkus ..
 Running within container:
 
 ```
-podman run -it -e SPLUNK_HOSTNAME=SPLUNKIP -e SPLUNK_TOKEN=token\
- -p KAFKA_INGRESS_BROKERS=BROKER:9092 quay.io/vkrizan/eventing-splunk-quarkus
+podman run -it -e ACG_CONFIG=/cdapp/devel.json -v devel.json:/cdapp/devel.json quay.io/vkrizan/eventing-splunk-quarkus
 ```
 
 You might ommit the interative terminal options `-it` if you want to have
 it running in background (detached).
 
 
-To run it locally with dev mode replace `BROKER`
-and execute:
+To run it locally with dev mode execute:
 
 ```
-$ ../mvnw quarkus:dev -Dquarkus.kafka.devservices.enabled=false \
-  -Dkafka.ingress.brokers=BROKER:9092
+$ ../mvnw quarkus:dev -Dquarkus.kafka.devservices.enabled=false
 ```
 
 The integration would connect to Kafka on `platform.notifications.tocamel`
@@ -100,13 +97,10 @@ where N is the number of the reserved ephemeral namespace.
 
 ```
 $ oc process -f ./clowdapp.yaml -o yaml \
-  -p IMAGE_TAG=notif-v4\
-  -p ENV_NAME=env-ephemeral-NN\
-  -p KAFKA_INGRESS_BROKERS=BROKER:9092 | oc apply -f -
+  -p IMAGE_TAG=latest \
+  -p ENV_NAME=env-ephemeral-NN | oc apply -f -
 ```
-replace NN with the number of the reserved ephemeral namespace,
-and `BROKER` with the hostname of the ephemeral broker instance
-(e.g. `env-ephemeral-42-76676c3d-kafka-brokers`).
+replace NN with the number of the reserved ephemeral namespace.
 
 
 (Note that this can be done using bonfire with a local config.)
