@@ -93,6 +93,12 @@ $ oc project ephemeral-N
 where N is the number of the reserved ephemeral namespace.
 
 
+Allow always pulling latest images in the environment/namespace:
+```
+$ oc patch env env-ephemeral-N --type='json' -p='[{"op": "replace", "path": "/spec/providers/deployment/omitPullPolicy", "value":true}]'
+```
+where N is the number of the reserved ephemeral namespace.
+
 ### Process and Deploy
 
 ```
