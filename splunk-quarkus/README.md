@@ -16,7 +16,7 @@ Ensure that the HEC has SSL disabled and that all tokens are enabled.
 ### Container Image Build
 
 ```
-$ cd integrations/splunk-quarkus
+$ cd splunk-quarkus
 $ podman build -f Dockerfile.jvm -t quay.io/vkrizan/eventing-splunk-quarkus ..
 ```
 

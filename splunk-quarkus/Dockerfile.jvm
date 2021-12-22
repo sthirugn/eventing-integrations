@@ -8,7 +8,7 @@ USER root
 COPY ./mvnw /home/jboss/
 COPY ./.mvn /home/jboss/.mvn
 COPY ./eclipse-formatter-config.xml /home/jboss/
-COPY ./integrations/splunk-quarkus /home/jboss
+COPY ./splunk-quarkus /home/jboss
 WORKDIR /home/jboss
 RUN ./mvnw clean package -DskipTests
 
