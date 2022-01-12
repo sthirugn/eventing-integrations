@@ -118,6 +118,9 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             // component.
             .removeHeaders("CamelHttp*")
 
+            //Add headers useful for error reporting and metrics
+            .setHeader("targetUrl", simple("${headers.metadata[url]}"))
+            .setHeader("timeIn", simpleF("%d", System.currentTimeMillis()))
 
             // body is a JsonObject so converting to consumable object
             // for the http producer
