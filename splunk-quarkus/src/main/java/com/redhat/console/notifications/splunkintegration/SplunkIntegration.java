@@ -129,16 +129,26 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             // Transform message to add splunk wrapper to the json
             .transform().simple("{\"source\": \"eventing\", \"sourcetype\": \"Insights event\", \"event\": ${body}}")
 
+            // Redirect depending on http or https (different default ports) so that it goes to the default splunk port
             // Send the message to Splunk's HEC as a splunk formattted event.
             // It sends token via Basic Preemptive Authentication.
             // POST method is being used, set up explicitly
             // (see https://camel.apache.org/components/latest/http-component.html#_which_http_method_will_be_used).
-            .toD(http("$simple{headers.metadata[url]}/services/collector/event")
-                .authenticationPreemptive(true)
-                .authMethod("Basic")
-                .httpMethod("POST")
-                .authUsername("x")
-                .authPassword("$simple{headers.extras[token]}"))
+            .choice()
+                .when(simple("${headers.metadata[url]} startsWith 'http://'"))
+                    .toD(http("$simple{headers.metadata[url]}/services/collector/event")
+                        .authenticationPreemptive(true)
+                        .authMethod("Basic")
+                        .httpMethod("POST")
+                        .authUsername("x")
+                        .authPassword("$simple{headers.extras[token]}"))
+                .otherwise()
+                    .toD(https("$simple{headers.metadata[url]}/services/collector/event")
+                        .authenticationPreemptive(true)
+                        .authMethod("Basic")
+                        .httpMethod("POST")
+                        .authUsername("x")
+                        .authPassword("$simple{headers.extras[token]}"))
             // Log after a successful send.
             .log("Response ${body}");
     }
