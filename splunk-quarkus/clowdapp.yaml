@@ -64,7 +64,7 @@ objects:
             memory: ${MEMORY_REQUEST}
 parameters:
   - name: IMAGE
-    value: quay.io/vkrizan/eventing-splunk-quarkus
+    value: quay.io/cloudservices/eventing-integrations-splunk
   - name: IMAGE_TAG
     value: latest
   - name: ENV_NAME
