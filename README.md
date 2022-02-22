@@ -6,3 +6,4 @@ build together with [Notifications](https://github.com/RedHatInsights/notificati
 ## Integrations
 
 * [Splunk Camel](splunk-quarkus/README.md)
+
