@@ -18,7 +18,7 @@ if test -f /etc/redhat-release && grep -q -i "release 7" /etc/redhat-release; th
     mkdir -p "$DOCKER_CONF"
     docker --config="$DOCKER_CONF" login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
     #docker --config="$DOCKER_CONF" login -u="$RH_REGISTRY_USER" -p="$RH_REGISTRY_TOKEN" registry.redhat.io
-    docker --config="$DOCKER_CONF" build -f Dockerfile.jvm -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    docker --config="$DOCKER_CONF" build -f ./Dockerfile.jvm -t "${IMAGE_NAME}:${IMAGE_TAG}" .
     docker --config="$DOCKER_CONF" push "${IMAGE_NAME}:${IMAGE_TAG}"
     for TAG in "latest" "qa"; do
         docker --config="$DOCKER_CONF" tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:$TAG"
@@ -31,7 +31,7 @@ else
     export REGISTRY_AUTH_FILE="$AUTH_CONF_DIR/auth.json"
     podman login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
     #podman login -u="$RH_REGISTRY_USER" -p="$RH_REGISTRY_TOKEN" registry.redhat.io
-    podman build -f Dockerfile.jvm -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    podman build -f ./Dockerfile.jvm -t "${IMAGE_NAME}:${IMAGE_TAG}" .
     podman push "${IMAGE_NAME}:${IMAGE_TAG}"
     for TAG in "latest" "qa"; do
         podman tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:$TAG"
