@@ -121,6 +121,9 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             //Add headers useful for error reporting and metrics
             .setHeader("targetUrl", simple("${headers.metadata[url]}"))
             .setHeader("timeIn", simpleF("%d", System.currentTimeMillis()))
+            
+            //Set Authorization header
+            .setHeader("Authorization", simpleF("Splunk %s", "${headers.metadata[X-Insight-Token]}"))
 
             // body is a JsonObject so converting to consumable object
             // for the http producer
@@ -137,18 +140,10 @@ public class SplunkIntegration extends EndpointRouteBuilder {
             .choice()
                 .when(simple("${headers.metadata[url]} startsWith 'http://'"))
                     .toD(http("$simple{headers.metadata[url].replaceFirst('^http://', '')}/services/collector/event")
-                        .authenticationPreemptive(true)
-                        .authMethod("Basic")
-                        .httpMethod("POST")
-                        .authUsername("x")
-                        .authPassword("$simple{headers.metadata[secret_token]}"))
+                        .httpMethod("POST"))
                 .otherwise()
                     .toD(https("$simple{headers.metadata[url].replaceFirst('^https://', '')}/services/collector/event")
-                        .authenticationPreemptive(true)
-                        .authMethod("Basic")
-                        .httpMethod("POST")
-                        .authUsername("x")
-                        .authPassword("$simple{headers.metadata[secret_token]}"))
+                        .httpMethod("POST"))
             // Log after a successful send.
             .log("Response ${body}");
     }
