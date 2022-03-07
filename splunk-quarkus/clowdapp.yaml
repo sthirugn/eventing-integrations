@@ -25,6 +25,7 @@ objects:
       replicas: 3
     deployments:
     - name: service
+      minReplicas: ${{MIN_REPLICAS}}
       webServices:
         private:
           enable: true
@@ -62,6 +63,7 @@ objects:
           requests:
             cpu: ${CPU_REQUEST}
             memory: ${MEMORY_REQUEST}
+
 parameters:
   - name: IMAGE
     value: quay.io/cloudservices/eventing-integrations-splunk
@@ -83,3 +85,6 @@ parameters:
   - name: KAFKA_INGRESS_TOPIC
     description: Kafka topic that the consumer takes messages from
     value: platform.notifications.tocamel
+  - name: MIN_REPLICAS
+    description: Minimum number of replicas
+    value: "3"
