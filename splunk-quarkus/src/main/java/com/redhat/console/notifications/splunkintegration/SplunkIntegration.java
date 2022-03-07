@@ -94,7 +94,7 @@ public class SplunkIntegration extends EndpointRouteBuilder {
     }
 
     private void configureIngress() throws Exception {
-        from(kafka(kafkaIngressTopic).brokers(kafkaBrokers).groupInstanceId(kafkaIngressGroupId))
+        from(kafka(kafkaIngressTopic).brokers(kafkaBrokers).groupId(kafkaIngressGroupId))
             // Decode CloudEvent
             .process(new CloudEventDecoder())
             // We check that this is our type.
