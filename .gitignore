@@ -3,7 +3,7 @@
 redhat-insights-*.*.*.tar.gz
 splunk/app/redhat-insights/local/
 splunk/app/redhat-insights/metadata/local.meta
-
+.vscode/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
