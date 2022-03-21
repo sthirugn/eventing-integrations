@@ -33,6 +33,8 @@ objects:
       webServices:
         private:
           enable: true
+      deploymentStrategy:
+        privateStrategy: RollingUpdate
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
         livenessProbe:
