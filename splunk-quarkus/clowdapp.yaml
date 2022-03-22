@@ -17,6 +17,10 @@ objects:
       iqePlugin: eventing
     dependencies:
     - notifications-backend
+    optionalDependencies:
+    - drift
+    - advisor-backend
+    - policies-engine
     kafkaTopics:
     - topicName: platform.notifications.ingress
       partitions: 3
