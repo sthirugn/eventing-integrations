@@ -31,6 +31,9 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -262,6 +265,16 @@ public class SplunkIntegration extends EndpointRouteBuilder {
                         .httpClientConfigurer(getClientConfigurer()))
                 .endChoice()
                 .otherwise()
+                .when(simple("${headers.metadata[trustAll]} == 'true'"))
+                .to(https("dynamic")
+                        .sslContextParameters(getTrustAllCACerts())
+                        .x509HostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                        .httpMethod("POST")
+                        .headerFilterStrategy(new SplunkHttpHeaderStrategy())
+                        .advanced()
+                        .httpClientConfigurer(getClientConfigurer()))
+                .endChoice()
+                .otherwise()
                 .to(https("dynamic")
                         .httpMethod("POST")
                         .headerFilterStrategy(new SplunkHttpHeaderStrategy())
@@ -270,6 +283,15 @@ public class SplunkIntegration extends EndpointRouteBuilder {
                 .endChoice()
                 .end()
                 .to(direct("success"));
+    }
+
+    protected SSLContextParameters getTrustAllCACerts() {
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+        trustManagersParameters.setTrustManager(new SplunkTrustAllCACerts());
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setTrustManagers(trustManagersParameters);
+
+        return sslContextParameters;
     }
 
     protected HttpClientConfigurer getClientConfigurer() {
