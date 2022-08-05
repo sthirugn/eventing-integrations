@@ -34,7 +34,6 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.ProtocolException;
 import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
@@ -54,10 +53,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class SplunkIntegration extends IntegrationsRouteBuilder {
 
-    private static final Config CONFIG = ConfigProvider.getConfig();
-
-    // The name of our component. Must be unique
-    public static final String COMPONENT_NAME = CONFIG.getValue("integrations.component.name", String.class);
     // Logger Name for logs using Log EIP
     public static final String LOGGER_NAME = "com.redhat.console.integration." + COMPONENT_NAME;
 
@@ -78,8 +73,6 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
     // Event return kafka group id
     @ConfigProperty(name = "kafka.return.group.id")
     String kafkaReturnGroupId;
-    // The return type
-    public static final String RETURN_TYPE = "com.redhat.console.notifications.history";
 
     class SplunkHttpHeaderStrategy extends HttpHeaderFilterStrategy {
         @Override

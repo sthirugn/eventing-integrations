@@ -20,8 +20,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * Configures Error Routes
@@ -29,14 +27,6 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 @ApplicationScoped
 public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
-
-    private static final Config CONFIG = ConfigProvider.getConfig();
-
-    // The name of our component. Must be unique
-    public static final String COMPONENT_NAME = CONFIG.getValue("integrations.component.name", String.class);
-
-    // The return type
-    public static final String RETURN_TYPE = "com.redhat.console.notifications.history";
 
     @Override
     public void configure() throws Exception {

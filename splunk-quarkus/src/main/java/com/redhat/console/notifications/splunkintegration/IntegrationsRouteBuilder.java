@@ -22,6 +22,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.http.ProtocolException;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * Base class for all Integrations
@@ -37,6 +39,15 @@ import org.apache.http.ProtocolException;
         IOException.class
 })
 abstract class IntegrationsRouteBuilder extends EndpointRouteBuilder {
+
+    protected static final Config CONFIG = ConfigProvider.getConfig();
+
+    // The name of our component. Must be unique
+    public static final String COMPONENT_NAME = CONFIG.getValue("integrations.component.name", String.class);
+
+    // The return type
+    public static final String RETURN_TYPE = "com.redhat.console.notifications.history";
+
     @Override
     public void configure() throws Exception {
         configureErrorHandler();
