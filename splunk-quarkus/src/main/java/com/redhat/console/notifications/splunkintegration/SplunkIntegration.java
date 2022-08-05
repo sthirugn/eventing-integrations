@@ -56,12 +56,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class SplunkIntegration extends EndpointRouteBuilder {
 
+    private static final Config CONFIG = ConfigProvider.getConfig();
+
     // The name of our component. Must be unique
-    public static final String COMPONENT_NAME = "splunk";
+    public static final String COMPONENT_NAME = CONFIG.getValue("integrations.component.name", String.class);
     // Logger Name for logs using Log EIP
     public static final String LOGGER_NAME = "com.redhat.console.integration." + COMPONENT_NAME;
 
-    private static final Config CONFIG = ConfigProvider.getConfig();
     // Only accept/listen on these CloudEvent types
     public static final String CE_TYPE = "com.redhat.console.notification.toCamel." + COMPONENT_NAME;
     // Event incoming kafka brokers
