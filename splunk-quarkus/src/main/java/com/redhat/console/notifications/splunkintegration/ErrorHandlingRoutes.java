@@ -20,7 +20,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -29,7 +28,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
  */
 
 @ApplicationScoped
-public class ErrorHandlingRoutes extends EndpointRouteBuilder {
+public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
 
     private static final Config CONFIG = ConfigProvider.getConfig();
 
@@ -41,6 +40,8 @@ public class ErrorHandlingRoutes extends EndpointRouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        super.configure();
+
         configureIoFailed();
         configureHttpFailed();
         configureTargetUrlValidationFailed();
