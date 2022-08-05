@@ -1,4 +1,4 @@
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.ExchangeTestSupport;

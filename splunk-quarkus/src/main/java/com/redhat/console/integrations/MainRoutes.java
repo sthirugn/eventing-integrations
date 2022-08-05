@@ -1,4 +1,4 @@
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -61,7 +61,7 @@ public class MainRoutes extends IntegrationsRouteBuilder {
                 .log("${header.ce-type} == '" + CE_TYPE + "'")
                 .filter().simple("${header.ce-type} == '" + CE_TYPE + "'")
                 // Log the parsed cloudevent message.
-                .to(log("com.redhat.console.notifications.splunkintegration?level=DEBUG"))
+                .to(log("com.redhat.console.integrations?level=DEBUG"))
                 .to(direct("handler"))
                 .end();
     }

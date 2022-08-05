@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
         HttpOperationFailedException.class,
         IOException.class
 })
-abstract class IntegrationsRouteBuilder extends EndpointRouteBuilder {
+abstract public class IntegrationsRouteBuilder extends EndpointRouteBuilder {
 
     protected static final Config CONFIG = ConfigProvider.getConfig();
 

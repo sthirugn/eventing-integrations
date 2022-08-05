@@ -1,4 +1,4 @@
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations;
 
 import javax.enterprise.context.ApplicationScoped;
 

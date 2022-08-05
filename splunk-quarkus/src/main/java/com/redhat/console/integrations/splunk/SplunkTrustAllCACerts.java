@@ -1,4 +1,4 @@
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations.splunk;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;

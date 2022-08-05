@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.console.notifications.splunkintegration;
+package com.redhat.console.integrations.splunk;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -35,6 +35,11 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.ProtocolException;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import com.redhat.console.integrations.IntegrationsRouteBuilder;
+import com.redhat.console.integrations.TargetUrlValidator;
+import com.redhat.console.integrations.EventAppender;
+import com.redhat.console.integrations.EventPicker;
 
 /**
  * The main class that does the work setting up the Camel routes. Entry point for messages is below
